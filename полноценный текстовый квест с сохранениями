@@ -1,0 +1,232 @@
+import json
+import os
+import time
+import random
+from datetime import datetime
+
+class Game:
+    def __init__(self):
+        self.player = {
+            "name": "",
+            "hp": 100,
+            "max_hp": 100,
+            "level": 1,
+            "exp": 0,
+            "exp_to_next": 100,
+            "inventory": [],
+            "gold": 0,
+            "location": "start",
+            "quests": [],
+            "completed_quests": []
+        }
+        self.running = True
+        self.save_file = "savegame.json"
+        
+    def clear_screen(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
+        
+    def typewriter(self, text, delay=0.03):
+        for char in text:
+            print(char, end='', flush=True)
+            time.sleep(delay)
+        print()
+        
+    def show_stats(self):
+        print("\n" + "="*50)
+        print(f"Игрок: {self.player['name']} | Уровень: {self.player['level']} | HP: {self.player['hp']}/{self.player['max_hp']}")
+        print(f"Опыт: {self.player['exp']}/{self.player['exp_to_next']} | Золото: {self.player['gold']}")
+        print(f"Инвентарь: {len(self.player['inventory'])} предметов")
+        print("="*50)
+        
+    def save_game(self):
+        data = {
+            "player": self.player,
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        with open(self.save_file, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        self.typewriter("Игра сохранена!")
+        
+    def load_game(self):
+        if os.path.exists(self.save_file):
+            with open(self.save_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                self.player = data["player"]
+            self.typewriter(f"Загружено сохранение от {data['timestamp']}")
+            return True
+        return False
+        
+    def add_exp(self, amount):
+        self.player['exp'] += amount
+        self.typewriter(f"+{amount} опыта!")
+        while self.player['exp'] >= self.player['exp_to_next']:
+            self.player['level'] += 1
+            self.player['exp'] -= self.player['exp_to_next']
+            self.player['exp_to_next'] = int(self.player['exp_to_next'] * 1.2)
+            self.player['max_hp'] += 20
+            self.player['hp'] = self.player['max_hp']
+            self.typewriter(f"ПОВЫШЕНИЕ УРОВНЯ! Теперь {self.player['level']} уровень!")
+            
+    def fight(self, enemy_name, enemy_hp, enemy_damage, reward_exp, reward_gold):
+        self.typewriter(f"\n⚔️ БОЙ: {enemy_name} ⚔️")
+        current_enemy_hp = enemy_hp
+        
+        while current_enemy_hp > 0 and self.player['hp'] > 0:
+            self.show_stats()
+            print(f"Враг: {enemy_name} | HP: {current_enemy_hp}")
+            print("\n1 - Атаковать")
+            print("2 - Защищаться")
+            print("3 - Сбежать")
+            
+            choice = input("Твой выбор: ")
+            
+            if choice == '1':
+                damage = random.randint(10, 25) + (self.player['level'] * 2)
+                current_enemy_hp -= damage
+                self.typewriter(f"Ты нанес {damage} урона!")
+                
+                if current_enemy_hp > 0:
+                    enemy_dmg = random.randint(enemy_damage - 5, enemy_damage + 5)
+                    self.player['hp'] -= enemy_dmg
+                    self.typewriter(f"Враг нанес {enemy_dmg} урона!")
+                    
+            elif choice == '2':
+                block = random.randint(5, 15)
+                enemy_dmg = random.randint(enemy_damage - 10, enemy_damage) - block
+                if enemy_dmg < 0:
+                    enemy_dmg = 0
+                self.player['hp'] -= enemy_dmg
+                self.typewriter(f"Ты защитился! Урон уменьшен до {enemy_dmg}")
+                
+            elif choice == '3':
+                if random.random() < 0.5:
+                    self.typewriter("Ты сбежал!")
+                    return False
+                else:
+                    self.typewriter("Сбежать не удалось!")
+                    enemy_dmg = random.randint(enemy_damage - 5, enemy_damage + 5)
+                    self.player['hp'] -= enemy_dmg
+                    
+        if self.player['hp'] <= 0:
+            return False
+        else:
+            self.typewriter(f"\nПОБЕДА! Ты убил {enemy_name}")
+            self.add_exp(reward_exp)
+            self.player['gold'] += reward_gold
+            self.typewriter(f"+{reward_gold} золота")
+            return True
+            
+    def start_location(self):
+        self.typewriter("\nТы находишься на лесной поляне. Вокруг старый лес.")
+        self.typewriter("Видишь избушку, тропинку в лес и старый колодец.")
+        
+        while True:
+            print("\n1 - Зайти в избушку")
+            print("2 - Пойти по тропинке")
+            print("3 - Заглянуть в колодец")
+            print("4 - Показать инвентарь")
+            print("5 - Сохранить игру")
+            print("6 - Выйти в главное меню")
+            
+            choice = input("Куда пойдешь? ")
+            
+            if choice == '1':
+                self.hut_location()
+            elif choice == '2':
+                self.trail_location()
+            elif choice == '3':
+                self.well_location()
+            elif choice == '4':
+                self.show_inventory()
+            elif choice == '5':
+                self.save_game()
+            elif choice == '6':
+                self.running = False
+                break
+                
+    def hut_location(self):
+        self.typewriter("\nТы заходишь в избушку. Внутри печка, стол и старый компьютер.")
+        self.typewriter("На столе лежит записка.")
+        
+        if "взял_записку" not in self.player['inventory']:
+            print("\n1 - Прочитать записку")
+            print("2 - Взять записку")
+            print("3 - Выйти из избушки")
+            
+            choice = input("Выбор: ")
+            if choice == '1':
+                self.typewriter("'Кто прочитает это - тот чинит корабль. Код запуска: 1-4-2'")
+            elif choice == '2':
+                self.player['inventory'].append("взял_записку")
+                self.typewriter("Ты взял записку!")
+        else:
+            self.typewriter("Ничего нового. Можно выйти.")
+            
+    def trail_location(self):
+        self.typewriter("\nТы идешь по тропинке. Внезапно на тебя выбегает волк!")
+        
+        if self.fight("Волк", 50, 12, 50, 30):
+            self.typewriter("На трупе волка ты находишь старый ключ.")
+            if "ключ" not in self.player['inventory']:
+                self.player['inventory'].append("ключ")
+                self.typewriter("Ключ добавлен в инвентарь!")
+                
+    def well_location(self):
+        self.typewriter("\nТы подходишь к колодцу. Оттуда веет холодом.")
+        
+        if random.random() < 0.3:
+            self.typewriter("Из колодца вылезает скелет!")
+            self.fight("Скелет", 40, 10, 60, 40)
+        else:
+            self.typewriter("Ты заглядываешь в колодец и видишь что-то блестящее.")
+            gold_found = random.randint(10, 50)
+            self.player['gold'] += gold_found
+            self.typewriter(f"Ты нашел {gold_found} золота!")
+            
+    def show_inventory(self):
+        print("\n" + "="*50)
+        print("ИНВЕНТАРЬ:")
+        if self.player['inventory']:
+            for item in self.player['inventory']:
+                print(f" - {item}")
+        else:
+            print("Пусто")
+        print(f"Золото: {self.player['gold']}")
+        print("="*50)
+        
+    def main_menu(self):
+        while True:
+            self.clear_screen()
+            print("="*50)
+            print("     ТЕКСТОВЫЙ КВЕСТ - ЛЕСНАЯ ИЗБУШКА")
+            print("="*50)
+            print("\n1 - Новая игра")
+            print("2 - Загрузить игру")
+            print("3 - Выход")
+            
+            choice = input("\nВыбери действие: ")
+            
+            if choice == '1':
+                name = input("Как тебя зовут? ")
+                self.player['name'] = name
+                self.player['hp'] = 100
+                self.player['max_hp'] = 100
+                self.player['level'] = 1
+                self.player['exp'] = 0
+                self.player['inventory'] = []
+                self.player['gold'] = 0
+                self.typewriter(f"\nДобро пожаловать в игру, {name}!")
+                self.start_location()
+            elif choice == '2':
+                if self.load_game():
+                    self.start_location()
+            elif choice == '3':
+                self.typewriter("До встречи!")
+                return
+                
+    def run(self):
+        self.main_menu()
+
+if __name__ == "__main__":
+    game = Game()
+    game.run()

@@ -1,0 +1,47 @@
+let tasks = [];
+
+function addTask() {
+    let task = prompt("что сделать?");
+    if(task) {
+        tasks.push({text: task, done: false});
+        showTasks();
+    }
+}
+
+function showTasks() {
+    console.log("\n=== мои дела ===");
+    for(let i = 0; i < tasks.length; i++) {
+        let status = tasks[i].done ? "✅" : "⭕";
+        console.log(status + " " + (i+1) + ". " + tasks[i].text);
+    }
+}
+
+function completeTask() {
+    let num = prompt("номер выполненной задачи");
+    if(tasks[num-1]) {
+        tasks[num-1].done = true;
+        console.log("молодец!");
+        showTasks();
+    }
+}
+
+function deleteTask() {
+    let num = prompt("номер задачи для удаления");
+    if(tasks[num-1]) {
+        tasks.splice(num-1, 1);
+        showTasks();
+    }
+}
+
+function menu() {
+    while(true) {
+        let choice = prompt("1-добавить 2-список 3-выполнено 4-удалить 5-выход");
+        if(choice == '1') addTask();
+        else if(choice == '2') showTasks();
+        else if(choice == '3') completeTask();
+        else if(choice == '4') deleteTask();
+        else if(choice == '5') break;
+    }
+}
+
+menu();

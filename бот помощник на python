@@ -1,1 +1,59 @@
+import random
+import datetime
+import os
 
+print("бот помощник запущен")
+
+def show_menu():
+    print("\n1 - узнать время")
+    print("2 - узнать погоду")
+    print("3 - калькулятор")
+    print("4 - генератор паролей")
+    print("5 - конвертер валют")
+    print("6 - выход")
+
+def get_weather():
+    weather_list = ["солнечно 25°", "дождливо 15°", "ветрено 20°", "снег -5°"]
+    return random.choice(weather_list)
+
+def calculator():
+    a = float(input("первое число: "))
+    op = input("знак (+ - * /): ")
+    b = float(input("второе число: "))
+    if op == '+': return a+b
+    if op == '-': return a-b
+    if op == '*': return a*b
+    if op == '/': return a/b
+
+def password_generator():
+    chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%"
+    length = int(input("длина пароля: "))
+    password = ""
+    for i in range(length):
+        password += random.choice(chars)
+    return password
+
+def currency_convert():
+    rates = {"usd": 470, "eur": 510, "rub": 5.5}
+    amount = float(input("сумма в тенге: "))
+    curr = input("валюта (usd/eur/rub): ")
+    if curr in rates:
+        return amount / rates[curr]
+    return "не знаю такую валюту"
+
+while True:
+    show_menu()
+    choice = input("выбери: ")
+    if choice == '1':
+        print(datetime.datetime.now())
+    elif choice == '2':
+        print(get_weather())
+    elif choice == '3':
+        print("результат:", calculator())
+    elif choice == '4':
+        print("пароль:", password_generator())
+    elif choice == '5':
+        print("результат:", currency_convert())
+    elif choice == '6':
+        print("пока")
+        break

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: Arial;
+    text-align: center;
+    padding: 50px;
+}
+.card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    margin: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+.avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.skill {
+    background: #eee;
+    padding: 8px;
+    margin: 10px;
+    border-radius: 10px;
+    display: inline-block;
+}
+button {
+    background: #667eea;
+    color: white;
+    padding: 10px 30px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div class="card">
+    <img src="https://via.placeholder.com/120" class="avatar">
+    <h1>Айтишник из Казахстана</h1>
+    <p>делаю ботов | сайты | скрипты от 1000 тенге</p>
+    
+    <div>
+        <span class="skill">Python</span>
+        <span class="skill">HTML/CSS</span>
+        <span class="skill">Git</span>
+    </div>
+    
+    <h3>проекты:</h3>
+    <ul style="text-align:left">
+        <li>✅ телеграм бот с погодой</li>
+        <li>✅ калькулятор на js</li>
+        <li>✅ парсер авито</li>
+        <li>✅ сайт визитка</li>
+    </ul>
+    
+    <button onclick="alert('пиши в телеграм @твой_ник')">связаться</button>
+    
+    <p>тг: @твой_ник | гитхаб: github.com/твой_логин</p>
+</div>
+</body>
+</html>

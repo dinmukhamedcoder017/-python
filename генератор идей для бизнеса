@@ -1,0 +1,38 @@
+import random
+
+ideas = [
+    "телеграм бот доставки еды",
+    "сайт для мастеров в казахстане",
+    "чат бот для знакомств",
+    "парсер объявлений олх",
+    "умный калькулятора рецептов",
+    "трекер привычек",
+    "генератор кличок для животных",
+    "переводчик с казахского",
+    "бот напоминаний",
+    "рандомайзер решений"
+]
+
+names = [
+    "Ермек", "Айнур", "Дамир", "Алия", "Руслан", "Жанна", "Арман", "Асель"
+]
+
+def generate_business():
+    idea = random.choice(ideas)
+    name = random.choice(names)
+    price = random.randint(1000, 10000)
+    return f"идея: {idea}\nназвание: {name} AI\nцена: {price} тенге"
+
+def save_idea(idea):
+    with open("my_ideas.txt", "a", encoding="utf-8") as f:
+        f.write(idea + "\n---\n")
+
+print("генератор бизнес идей v2.0")
+while True:
+    input("жми enter для идеи (q выход)")
+    idea = generate_business()
+    print(idea)
+    save = input("сохранить? (да/нет): ")
+    if save == 'да':
+        save_idea(idea)
+        print("сохранено!")

@@ -1,0 +1,27 @@
+questions = [
+    {"question": "как расшифровывается HTML?", "answer": "hypertext markup language"},
+    {"question": "python это змея или язык?", "answer": "язык"},
+    {"question": "сколько бит в байте?", "answer": "8"},
+    {"question": "что такое git?", "answer": "система контроля версий"},
+    {"question": "как называется главная страница сайта?", "answer": "главная"},
+]
+
+score = 0
+print("викторина для айтишника началась")
+
+for i, q in enumerate(questions):
+    print(f"\nвопрос {i+1}: {q['question']}")
+    user_answer = input("твой ответ: ").lower().strip()
+    if user_answer == q['answer']:
+        print("правильно!")
+        score += 1
+    else:
+        print(f"неправильно. ответ: {q['answer']}")
+
+print(f"\nтвой результат: {score} из {len(questions)}")
+if score == len(questions):
+    print("ты гений!")
+elif score >= 3:
+    print("неплохо")
+else:
+    print("учи матчасть")
